@@ -16,7 +16,7 @@ fetch(url)
     all_data.forEach(function(o){
       tmp[`${o.gsx$姓名.$t} - ${o.gsx$電話.$t}`] ||= o.gsx$幫誰加油請輸入全名或勾選無.$t;
     });
-    member_data = Object.values(tmp)
+    member_data = Object.values(tmp).filter(name => name != '無' )
     $('body').append(`<style>${spin_style(member_data.length)}</style>`);
     let txt; // 結果
     // 按鈕
