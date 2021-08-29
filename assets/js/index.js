@@ -1,22 +1,20 @@
-/*
-example:
-google sheet url:https://docs.google.com/spreadsheets/d/gbnm1212fdsf5454g5fds4g5fd4sngf/edit#gid=0
-google_file_feed_id = 'gbnm1212fdsf5454g5fds4g5fd4sngf'
-*/
-const 
-  google_file_feed_id = '1cY0YYL67Us5SotGM3L9gIxWkGdRkDc5SuthMNaNGQjg',
-  url = `https://spreadsheets.google.com/feeds/list/${google_file_feed_id}/1/public/values?alt=json`,
+const
+  worksheet_id = '1cY0YYL67Us5SotGM3L9gIxWkGdRkDc5SuthMNaNGQjg',
+  tab_name = '加油團清單',
+  key = 'AIzaSyDFCqJwH8rUfPWJ5qQDxDxumUl9H_8Grgw',
+  url = 'https://sheets.googleapis.com/v4/spreadsheets/'+worksheet_id+'/values/'+tab_name+'?alt=json&key='+key,
   duration = 3500; // 拉霸效果執行多久
-var member_data, btn = $('.btn-start');
+var cheer_data, btn = $('.btn-start');
 fetch(url)
   .then(res => res.json())
   .then(data => {
-    var all_data = data.feed.entry;
-    var tmp = {};
-    all_data.forEach(function(o){
-      tmp[`${o.gsx$姓名.$t} - ${o.gsx$電話.$t}`] ||= o.gsx$幫誰加油請輸入全名或勾選無.$t;
-    });
-    member_data = Object.values(tmp).filter(name => name != '無' )
+    var header = data.values[0];
+    var all_data = data.values.slice(1).map(function(d){
+      tmp = {}
+      header.forEach(function(h,i){ tmp[h] = d[i] });
+      return tmp
+    }).map(d => d['幫誰加油(請輸入全名/或勾選無)'])
+    member_data = Object.values(all_data).filter(name => name != '無' );
     $('body').append(`<style>${spin_style(member_data.length)}</style>`);
     let txt; // 結果
     // 按鈕
