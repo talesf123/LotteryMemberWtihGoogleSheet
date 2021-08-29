@@ -8,13 +8,19 @@ var cheer_data, btn = $('.btn-start');
 fetch(url)
   .then(res => res.json())
   .then(data => {
-    var header = data.values[0];
+    var header = data.values[0], keys = {};
     var all_data = data.values.slice(1).map(function(d){
       tmp = {}
       header.forEach(function(h,i){ tmp[h] = d[i] });
+      tmp['電話'] = mask(tmp['電話']);
+      if(keys[`${tmp.姓名} - ${tmp.電話}`] == undefined){
+        keys[`${tmp.姓名} - ${tmp.電話}`] = 1;
+      }else{
+        tmp = undefined;
+      }
       return tmp
-    }).map(d => d['幫誰加油(請輸入全名/或勾選無)'])
-    member_data = Object.values(all_data).filter(name => name != '無' );
+    }).filter(d => d);
+    member_data = all_data.map(d => d['幫誰加油(請輸入全名/或勾選無)']).filter(d => d != '無');
     $('body').append(`<style>${spin_style(member_data.length)}</style>`);
     var randChk = Array.from(Array(member_data.length).keys());
     // 按鈕
