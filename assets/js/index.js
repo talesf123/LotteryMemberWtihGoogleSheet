@@ -16,13 +16,13 @@ fetch(url)
     }).map(d => d['幫誰加油(請輸入全名/或勾選無)'])
     member_data = Object.values(all_data).filter(name => name != '無' );
     $('body').append(`<style>${spin_style(member_data.length)}</style>`);
-    let txt; // 結果
+    var randChk = Array.from(Array(member_data.length).keys());
     // 按鈕
     btn.on('click', function(e){
       e.preventDefault();
       // 禁止按鈕再被點擊
       $(this).addClass('not-allow');
-      const chooseShop = toggle => {
+      const chooseOne = toggle => {
         // 清空、插入選項
         let input = document.querySelector('.wrap');
         input.innerHTML = '';
@@ -32,18 +32,17 @@ fetch(url)
         // 加入動畫 class name
         const list = document.querySelectorAll('.wrap > span');
         Array.prototype.forEach.call(list, l => l.classList.add('span-' + (toggle.length - 1)));
-        // 亂數決定中選店家
-        let max = toggle.length - 1;
-        txt = toggle[r(max)];
-        list[0].innerText = txt;
-        
+        // 亂數
+        var ind = r(randChk.length - 1),
+          ind = randChk.splice(ind, 1)[0];
+        list[0].innerText = toggle[ind];
         // 移除動畫
         setTimeout(() => {
           Array.prototype.forEach.call(list, l => l.removeAttribute('class'));
           btn.removeClass('not-allow');
         }, duration);
       };
-      chooseShop(member_data);
+      chooseOne(member_data);
     });
   }
 );
