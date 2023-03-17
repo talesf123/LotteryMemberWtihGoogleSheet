@@ -4,7 +4,7 @@ const
   worksheet_id = urlParams.get('worksheet_id'),
   tab_name = urlParams.get('tab_name'),
   key = urlParams.get('key');
-var debug_data = null;
+
 if(!worksheet_id || !tab_name || !key){
   alert('參數有漏')
 }else{
@@ -15,9 +15,6 @@ if(!worksheet_id || !tab_name || !key){
   fetch(url)
     .then(res => res.json())
     .then(data => {
-      if(urlParams.get('debug') == 1){
-        debug_data = data;
-      }
       var header = data.values[0], keys = {};
       var all_data = data.values.slice(1).map(function(d){
         tmp = {}
@@ -32,7 +29,10 @@ if(!worksheet_id || !tab_name || !key){
         }
         return tmp
       }).filter(d => d);
-      member_data = all_data.map(d => d['幫誰加油(請輸入全名/或勾選無)']).filter(d => d != '無');
+      var column = header.find(function(x){
+        return x.startsWith('幫誰加油')
+      });
+      member_data = all_data.map(d => d[column]).filter(d => d != '無');
       $('body').append(`<style>${spin_style(member_data.length)}</style>`);
       var randChk = Array.from(Array(member_data.length).keys());
       // 按鈕
